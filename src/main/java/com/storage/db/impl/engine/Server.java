@@ -1,16 +1,22 @@
 package com.storage.db.impl.engine;
 
 import com.storage.db.design.engine.IServer;
+import com.storage.db.impl.task.Task;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server implements IServer {
 
-    private int port;
+    private int port = 1452;
+    private int countTheard = 10;
     private ServerSocket serverSocket = null;
+    private ExecutorService serviceTheaderPool = null;
+    private boolean stop = false;
 
     public Server() {
     }
@@ -22,6 +28,7 @@ public class Server implements IServer {
     public boolean createServer() {
         try {
             serverSocket = new ServerSocket(port);
+            serviceTheaderPool = Executors.newFixedThreadPool(countTheard);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -31,9 +38,13 @@ public class Server implements IServer {
 
     public void setPropertiesServer(Properties properties) {
         try {
-            port = Integer.valueOf(properties.getProperty("port", "1452"));
-        } catch (NumberFormatException e){
-            port = 1452;
+            port = Integer.parseInt(properties.getProperty("port", "1452"));
+        } catch (NumberFormatException ignored){
+        }
+
+        try {
+            countTheard = Integer.parseInt(properties.getProperty("countTheard", "10"));
+        } catch (NumberFormatException ignored){
         }
     }
 
@@ -42,13 +53,22 @@ public class Server implements IServer {
         if(serverSocket == null)
             createServer();
 
-        while (true){
+        stop = false;
+        while (!stop){
             try {
                 Socket socket = serverSocket.accept();
-
+                Task task = new Task();
+                task.setClient(socket);
+                serviceTheaderPool.execute(task);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
+        serviceTheaderPool.shutdown();
+    }
+
+    public void stopServer() {
+        stop = true;
     }
 }
