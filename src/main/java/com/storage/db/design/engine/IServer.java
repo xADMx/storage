@@ -6,4 +6,5 @@ public interface IServer {
     public boolean createServer();
     public void setPropertiesServer(Properties properties);
     public void start();
+    public void stopServer();
 }
