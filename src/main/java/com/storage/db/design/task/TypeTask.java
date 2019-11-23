@@ -6,7 +6,8 @@ public enum TypeTask {
     EDIT("Добавить данные в таблицу"),
     DELETE("Добавить данные в таблицу"),
     SELECT("Вывод данных"),
-    CREATE_FUNCTION("Создание функции");
+    CREATE_FUNCTION("Создание функции"),
+    RESULT("Вернуть результат");
 
     private String desc;
 

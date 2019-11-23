@@ -1,0 +1,10 @@
+    private {type} {nameField};
+
+    @XmlAttribute
+    public void set{nameField}({type} {nameField}) {
+        this.{nameField} = {nameField};
+    }
+
+    public {type} get{nameField}() {
+        return {nameField};
+    }

@@ -1,7 +1,8 @@
 package com.storage.db.impl.engine;
 
 import com.storage.db.design.engine.IServer;
-import com.storage.db.impl.task.Task;
+import com.storage.db.impl.task.AHeadTask;
+import com.storage.db.impl.task.TaskReadSocket;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -9,6 +10,7 @@ import java.net.Socket;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 public class Server implements IServer {
 
@@ -56,10 +58,8 @@ public class Server implements IServer {
         stop = false;
         while (!stop){
             try {
-                Socket socket = serverSocket.accept();
-                Task task = new Task();
-                task.setClient(socket);
-                serviceTheaderPool.execute(task);
+                Socket client = serverSocket.accept();
+                TaskReadSocket task = new TaskReadSocket(client, serviceTheaderPool);
             } catch (IOException e) {
                 e.printStackTrace();
             }

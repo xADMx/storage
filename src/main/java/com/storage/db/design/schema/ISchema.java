@@ -1,4 +1,4 @@
 package com.storage.db.design.schema;
 
-public interface ISchemaDB {
+public interface ISchema {
 }
